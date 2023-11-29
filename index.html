@@ -20,6 +20,9 @@
                 <li role="presentation">
                     <a id="about" class="cursor-pointer">About</a>
                 </li>
+                <li role="presentation">
+                    <a id="linkedin" href="https://www.linkedin.com/in/jack-amato-00760b57">LinkedIn Profile</a>
+                </li>
             
         </ul>
     </div>
@@ -30,6 +33,7 @@
                     <h1>Welcome to Jack Amato's GitHub&nbsp;Page</h1>
                     <p>This page will be kept simple and a little old-school.</p>
                     <p>The majority of functionality and styling leverages Bootstrap, jQuery and vanilla css/js</p>
+                    <p class="text-danger"><strong>This page is a work in progress</strong></p>
                 </div>
             </section>
         </div>
@@ -50,19 +54,34 @@
                     <h1>Welcome to Jack Amato's GitHub&nbsp;Page</h1>
                     <p>This page will be kept simple and a little old-school.</p>
                     <p>The majority of functionality and styling leverages Bootstrap, jQuery and vanilla css/js</p>
+                    <p class="text-danger"><strong>This page is a work in progress</strong></p>
                 </div>
             </section>`,
             ABOUT_ME: 
-            `<section class="align-center">
+            `<section class="text-center container">
                 <h2 class="">About Me</h2>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <img src="amato_headshot.png" alt="Headshot of Jack Amato" class="img-circle headshot-img">
+                    </div>
+                    <div class="col-xs-10 text-left">
+                        <p class="lead">I'm a technical problem solver with soft skills and business savvy.</p> 
+                        <p class="lead">I love to learn and take on new challenges.</p>
+                        <p class="lead">I'm passionate about building cool stuff, impacting the world via technology, and improving every day.</p>
+                        <button type="button" class="btn btn-warning education">Education</button>
+                        <button type="button" class="btn btn-warning experience">Professional Experience</button>
+                    </div>
+                </div>
             </section>`};
         </script>
         <style type="text/css">
-        .align-center {
-            text-align: center;
-        }
         .cursor-pointer{
             cursor: pointer;
+        }
+        .headshot-img{
+            height: 220px;
+            width: 160px;
+            object-fit: cover;
         }
         </style>
     </body>
