@@ -12,20 +12,23 @@
     <body>
         <nav class="nav navbar-inverse">
             <div class="container">
-        <ul class="nav navbar-nav" role="tablist">
+                <ul class="nav navbar-nav" role="tablist">
             
-                <li role="presentation">
-                    <a id="home" class="cursor-pointer">Home</a>
-                </li>
-                <li role="presentation">
-                    <a id="about" class="cursor-pointer">About</a>
-                </li>
-                <li role="presentation">
-                    <a id="linkedin" href="https://www.linkedin.com/in/jack-amato-00760b57">LinkedIn Profile</a>
-                </li>
+                    <li role="presentation">
+                        <a id="home" class="cursor-pointer">Home</a>
+                    </li>
+                    <li role="presentation">
+                        <a id="about" class="cursor-pointer">About</a>
+                    </li>
+                    <li role="presentation">
+                        <a id="pub-api-nav" class="cursor-pointer">Public API's</a>
+                    </li>
+                    <li role="presentation">
+                        <a id="linkedin" href="https://www.linkedin.com/in/jack-amato-00760b57">LinkedIn Profile</a>
+                    </li>
             
-        </ul>
-    </div>
+                </ul>
+            </div>
         </nav>
         <div class="main">
             <section class="container">
@@ -37,6 +40,7 @@
                 </div>
             </section>
         </div>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script type="text/javascript">
         jQuery(function(){
@@ -45,8 +49,46 @@
             });
             jQuery('#about').on('click', function(){
                 jQuery('.main').html(pages.ABOUT_ME);
+                bindExperienceDisplay();
+                bindEducationDisplay()
+            });
+            jQuery('#pub-api-nav').on('click', function(){
+                jQuery('.main').html(pages.PUBLIC_API);
+                bindPublicApiAjax();
             });
         });
+        function bindPublicApiAjax(){
+            jQuery('#pub-api').on('click', function(){
+                jQuery.ajax('https://api.publicapis.org/entries', {
+                    dataType: 'json',
+                    success: function(data){
+                        data.offset = !!data.offset ? data.offset : data.offset = 0;
+                        data.limit = !!data.limit ? data.limit : 10;
+                        window.publicApiResults = data;
+                        for (let i=0; i<=10; i++){
+                            apiData = data.entries[i];
+                            const pubApiResultsContainer = jQuery('#pub-api-results');
+                            pubApiResultsContainer.append('<div><strong>' + apiData.API + '</strong</div>');
+                            pubApiResultsContainer.append('<div>' + apiData.Description + '</div>');
+                            pubApiResultsContainer.append('<a href="' + apiData.Link + '">' + apiData.Link + '</a>');
+                        }  
+                    },
+                    error: function(){
+                        jQuery('#pub-api-results').html('<div class="alert alert-danger" role="alert"><strong>Uh oh!</strong>Something went wrong, try again later.  Maybe give some of the other stuff on my site a whirl in the meantime.</div>')
+                    }
+                });
+            });
+        }
+        function bindEducationDisplay(){
+            jQuery('.education').on('click', function(){
+                jQuery('#about-me-content').html('<div class="alert alert-danger" role="alert">This part of the site is under construction, please visit my LinkedIn profile found in the header for details of my education.</div>')
+            });
+        }
+        function bindExperienceDisplay(){
+            jQuery('.experience').on('click', function(){
+                jQuery('#about-me-content').html('<div class="alert alert-danger" role="alert">This part of the site is under construction, please visit my LinkedIn profile found in the header for details of my professional experience.</div>')
+            });
+        }
         const pages = {
             HOME: 
             `<section class="container">
@@ -72,6 +114,17 @@
                         <button type="button" class="btn btn-warning experience">Professional Experience</button>
                     </div>
                 </div>
+                <div class="row">
+                    <div id="about-me-content"></div>
+                </div>
+            </section>`,
+            PUBLIC_API: 
+            `<section class="container">
+                <h2>Public API List</h2>
+                <p>This section will retrieve a list of free Public API's that can be used for personal projects.</p>
+                <p>Press this button at your own risk.  I do not support what is returned, just the ability to GET some data and render it to a page.</p>
+                <button id="pub-api" class="btn btn-warning" type="submit">Get API List</button>
+                <div id="pub-api-results"></div>
             </section>`};
         </script>
         <style type="text/css">
