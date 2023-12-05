@@ -21,6 +21,9 @@
                     <a id="about" class="cursor-pointer">About</a>
                 </li>
                 <li role="presentation">
+                    <a id="pub-api-nav" class="cursor-pointer">Public API's</a>
+                </li>
+                <li role="presentation">
                     <a id="linkedin" href="https://www.linkedin.com/in/jack-amato-00760b57">LinkedIn Profile</a>
                 </li>
             
@@ -46,7 +49,34 @@
             jQuery('#about').on('click', function(){
                 jQuery('.main').html(pages.ABOUT_ME);
             });
+            jQuery('#pub-api-nav').on('click', function(){
+                jQuery('.main').html(pages.PUBLIC_API);
+                bindPublicApiAjax();
+            });
         });
+        function bindPublicApiAjax(){
+            jQuery('#pub-api').on('click', function(){
+                jQuery.ajax('https://api.publicapis.org/entries', {
+                    dataType: 'json',
+                    success: function(data){
+                        data.offset = !!data.offset ? data.offset : data.offset = 0;
+                        data.limit = !!data.limit ? data.limit : 10;
+                        window.publicApiResults = data;
+                        for (let i=0; i<=10; i++){
+                            apiData = data.entries[i];
+                            const pubApiResultsContainer = jQuery('#pub-api-results');
+                            pubApiResultsContainer.append('<div><strong>' + apiData.API + '</strong</div>');
+                            pubApiResultsContainer.append('<div>' + apiData.Description + '</div>');
+                            pubApiResultsContainer.append('<a href="' + apiData.Link + '">' + apiData.Link + '</a>');
+                        }
+                        
+                    },
+                    error: function(){
+                        jQuery('#pub-api-results').html('<div class="alert alert-danger" role="alert"><strong>Uh oh!</strong>Something went wrong, try again later.  Maybe give some of the other stuff on my site a whirl in the meantime.</div>')
+                    }
+                });
+            });
+        }
         const pages = {
             HOME: 
             `<section class="container">
@@ -72,6 +102,14 @@
                         <button type="button" class="btn btn-warning experience">Professional Experience</button>
                     </div>
                 </div>
+            </section>`,
+            PUBLIC_API: 
+            `<section class="container">
+                <h2>Public API List</h2>
+                <p>This section </p>
+                <p>Press this button at your own risk.  I do not support what is returned, just the ability to GET some data and render it to a page.</p>
+                <button id="pub-api" class="btn btn-warning" type="submit">Get API List</button>
+                <div id="pub-api-results"></div>
             </section>`};
         </script>
         <style type="text/css">
