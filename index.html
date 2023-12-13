@@ -15,13 +15,13 @@
                 <ul class="nav navbar-nav" role="tablist">
             
                     <li role="presentation">
-                        <a id="home" class="cursor-pointer">Home</a>
+                        <a id="home" href="#" class="cursor-pointer">Home</a>
                     </li>
                     <li role="presentation">
-                        <a id="about" class="cursor-pointer">About</a>
+                        <a id="about" href="#about" class="cursor-pointer">About</a>
                     </li>
                     <li role="presentation">
-                        <a id="pub-api-nav" class="cursor-pointer">Public API's</a>
+                        <a id="pub-api-nav" href="#public-api-list" class="cursor-pointer">Public API's</a>
                     </li>
                     <li role="presentation">
                         <a id="linkedin" href="https://www.linkedin.com/in/jack-amato-00760b57">LinkedIn Profile</a>
@@ -43,52 +43,98 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script type="text/javascript">
+        window.onhashchange = function(e){
+            const hash = e.newURL.split('#')[1];
+            displayPageFromHash(hash);
+        };
+
         jQuery(function(){
+            const hash = window.location.href.split('#')[1];
+            displayPageFromHash(hash);
+
             jQuery('#home').on('click', function(){
-                jQuery('.main').html(pages.HOME);
+                displayHomePage();
             });
             jQuery('#about').on('click', function(){
-                jQuery('.main').html(pages.ABOUT_ME);
-                bindExperienceDisplay();
-                bindEducationDisplay()
+                displayAboutPage();
             });
             jQuery('#pub-api-nav').on('click', function(){
-                jQuery('.main').html(pages.PUBLIC_API);
-                bindPublicApiAjax();
+                displayPubApiPage();
             });
         });
+
+        function displayPageFromHash(hash){
+            switch(hash){
+                case '':
+                    displayHomePage();
+                    break;
+                case 'about':
+                    displayAboutPage();
+                    break;
+                case 'public-api-list':
+                    displayPubApiPage();
+            }
+        }
+
+        function displayHomePage(){
+            jQuery('.main').html(pages.HOME);
+        };
+
+        function displayAboutPage(){
+            jQuery('.main').html(pages.ABOUT_ME);
+            bindExperienceDisplay();
+            bindEducationDisplay()
+        };
+
+        function displayPubApiPage(){
+            jQuery('.main').html(pages.PUBLIC_API);
+            bindPublicApiAjax();
+        };
+
         function bindPublicApiAjax(){
             jQuery('#pub-api').on('click', function(){
-                jQuery.ajax('https://api.publicapis.org/entries', {
-                    dataType: 'json',
-                    success: function(data){
-                        data.offset = !!data.offset ? data.offset : data.offset = 0;
-                        data.limit = !!data.limit ? data.limit : 10;
-                        window.publicApiResults = data;
-                        for (let i=0; i<=10; i++){
-                            apiData = data.entries[i];
-                            const pubApiResultsContainer = jQuery('#pub-api-results');
-                            pubApiResultsContainer.append('<div><strong>' + apiData.API + '</strong</div>');
-                            pubApiResultsContainer.append('<div>' + apiData.Description + '</div>');
-                            pubApiResultsContainer.append('<a href="' + apiData.Link + '">' + apiData.Link + '</a>');
-                        }  
-                    },
-                    error: function(){
-                        jQuery('#pub-api-results').html('<div class="alert alert-danger" role="alert"><strong>Uh oh!</strong>Something went wrong, try again later.  Maybe give some of the other stuff on my site a whirl in the meantime.</div>')
-                    }
-                });
+                if(!!window.publicApiResults){
+                    renderPubApiData(window.publicApiResults);
+                } else{
+                    jQuery.ajax('https://api.publicapis.org/entries', {
+                        dataType: 'json',
+                        success: function(data){
+                            data.offset = !!data.offset ? data.offset : data.offset = 0;
+                            data.limit = !!data.limit ? data.limit : 10;
+                            window.publicApiResults = data;
+                            renderPubApiData(data);            
+                        },
+                        error: function(){
+                            jQuery('#pub-api-results').html('<div class="alert alert-danger" role="alert"><strong>Uh oh!</strong>Something went wrong, try again later.  Maybe give some of the other stuff on my site a whirl in the meantime.</div>')
+                        }
+                    });
+                }
             });
         }
+
+        function renderPubApiData(data){
+            jQuery('#pub-api-results').empty()
+            for (let i=data.offset; i<=data.limit; i++){
+                apiData = data.entries[i];
+                jQuery('#pub-api-results').append('<div class="pub-api-item pub-api-result-' + i + '"></div>')
+                const thisResultContainer = jQuery('.pub-api-result-' + i);
+                thisResultContainer.append('<div><strong>' + apiData.API + '</strong</div>');
+                thisResultContainer.append('<div>' + apiData.Description + '</div>');
+                thisResultContainer.append('<a href="' + apiData.Link + '">' + apiData.Link + '</a>');
+            }
+        };
         function bindEducationDisplay(){
             jQuery('.education').on('click', function(){
                 jQuery('#about-me-content').html('<div class="alert alert-danger" role="alert">This part of the site is under construction, please visit my LinkedIn profile found in the header for details of my education.</div>')
             });
         }
+
         function bindExperienceDisplay(){
             jQuery('.experience').on('click', function(){
                 jQuery('#about-me-content').html('<div class="alert alert-danger" role="alert">This part of the site is under construction, please visit my LinkedIn profile found in the header for details of my professional experience.</div>')
             });
         }
+
         const pages = {
             HOME: 
             `<section class="container">
@@ -114,14 +160,14 @@
                         <button type="button" class="btn btn-warning experience">Professional Experience</button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row about-me-content-container">
                     <div id="about-me-content"></div>
                 </div>
             </section>`,
             PUBLIC_API: 
             `<section class="container">
                 <h2>Public API List</h2>
-                <p>This section will retrieve a list of free Public API's that can be used for personal projects.</p>
+                <p>This section will retrieve a list of free public API's that can be used for personal projects.</p>
                 <p>Press this button at your own risk.  I do not support what is returned, just the ability to GET some data and render it to a page.</p>
                 <button id="pub-api" class="btn btn-warning" type="submit">Get API List</button>
                 <div id="pub-api-results"></div>
@@ -135,6 +181,12 @@
             height: 220px;
             width: 160px;
             object-fit: cover;
+        }
+        .pub-api-item{
+            margin: 20px 0;
+        }
+        .about-me-content-container{
+            margin-top: 20px;
         }
         </style>
     </body>
