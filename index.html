@@ -43,8 +43,8 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script type="text/javascript">
-        window.onhashchange = function(e){
-            const hash = e.newURL.split('#')[1];
+        window.onpopstate = function(e){
+            const hash = window.location.href.split('#')[1];
             displayPageFromHash(hash);
         };
 
@@ -65,7 +65,10 @@
 
         function displayPageFromHash(hash){
             switch(hash){
-                case '' || undefined:
+                case undefined:
+                    displayHomePage();
+                    break;
+                case '':
                     displayHomePage();
                     break;
                 case 'about':
