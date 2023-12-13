@@ -95,9 +95,10 @@
         };
 
         function bindPublicApiAjax(){
-            jQuery('#pub-api').on('click', function(){
+            jQuery('#pub-api-cta').on('click', function(){
                 if(!!window.publicApiResults){
                     renderPubApiData(window.publicApiResults);
+                    // renderPubApiPagination(data);
                 } else{
                     jQuery.ajax('https://api.publicapis.org/entries', {
                         dataType: 'json',
@@ -105,7 +106,8 @@
                             data.offset = !!data.offset ? data.offset : data.offset = 0;
                             data.limit = !!data.limit ? data.limit : 10;
                             window.publicApiResults = data;
-                            renderPubApiData(data);            
+                            renderPubApiData(data);
+                            // renderPubApiPagination(data);        
                         },
                         error: function(){
                             jQuery('#pub-api-results').html('<div class="alert alert-danger" role="alert"><strong>Uh oh!</strong>Something went wrong, try again later.  Maybe give some of the other stuff on my site a whirl in the meantime.</div>')
@@ -116,7 +118,7 @@
         }
 
         function renderPubApiData(data){
-            jQuery('#pub-api-results').empty()
+            jQuery('#pub-api-results').empty();
             for (let i=data.offset; i<=data.limit; i++){
                 apiData = data.entries[i];
                 jQuery('#pub-api-results').append('<div class="pub-api-item pub-api-result-' + i + '"></div>')
@@ -124,8 +126,23 @@
                 thisResultContainer.append('<div><strong>' + apiData.API + '</strong</div>');
                 thisResultContainer.append('<div>' + apiData.Description + '</div>');
                 thisResultContainer.append('<a href="' + apiData.Link + '">' + apiData.Link + '</a>');
+                thisResultContainer.append('<div class="pub-api-result-labels pub-api-result-labels-' + i + '"></div>');
+                const labelsContainer = jQuery('.pub-api-result-labels-' + i);
+                labelsContainer.append('<div class="label label-primary pub-api-result-label">Auth: ' + apiData.Auth + '</div>');
+                labelsContainer.append('<div class="label label-success pub-api-result-label">HTTPS: ' + apiData.HTTPS + '</div>');
+                labelsContainer.append('<div class="label label-info pub-api-result-label">Cors: ' + apiData.Cors + '</div>');
             }
-        };
+        }
+
+        function renderPubApiPagination(data){
+            const totalPages = data.count / data.limit;
+            const currentPage = data.offset / data.limit;
+            jQuery('#pub-api-results').append('<nav aria-label="API results pages" class="pub-api-pagination"><ul class="pub-api-pages pagination"></ul></nav>');
+            for (let i=1; i<=totalPages; i++){
+                jQuery('.pub-api-pages').append('<li class="bg-info text-info cursor-pointer"><a>' + i + '</a></li>');
+            }
+        }
+
         function bindEducationDisplay(){
             jQuery('.education').on('click', function(){
                 jQuery('#about-me-content').html('<div class="alert alert-danger" role="alert">This part of the site is under construction, please visit my LinkedIn profile found in the header for details of my education.</div>')
@@ -172,7 +189,7 @@
                 <h2>Public API List</h2>
                 <p>This section will retrieve a list of free public API's that can be used for personal projects.</p>
                 <p>Press this button at your own risk.  I do not support what is returned, just the ability to GET some data and render it to a page.</p>
-                <button id="pub-api" class="btn btn-warning" type="submit">Get API List</button>
+                <button id="pub-api-cta" class="btn btn-warning" type="submit">Get API List</button>
                 <div id="pub-api-results"></div>
             </section>`};
         </script>
@@ -190,6 +207,21 @@
         }
         .about-me-content-container{
             margin-top: 20px;
+        }
+        .pub-api-pages li{
+            list-style: none;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border-radius: 6px;
+            margin: 5px;
+            padding-top: 5px;
+        }
+        .pub-api-result-label{
+            margin: 5px;
+        }
+        .pub-api-result-label{
+            margin-left: 0px;
         }
         </style>
     </body>
