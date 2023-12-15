@@ -169,10 +169,10 @@
             `<section class="text-center container">
                 <h2 class="">About Me</h2>
                 <div class="row">
-                    <div class="col-xs-4 col-md-3 col-lg-2">
+                    <div class="col-xs-12 col-sm-4 col-lg-2">
                         <img src="amato_headshot.png" alt="Headshot of Jack Amato" class="img-circle headshot-img">
                     </div>
-                    <div class="col-xs-8 col-md-9 col-lg-10 text-left">
+                    <div class="col-xs-12 col-sm-8 col-lg-10 text-left about-me-intro">
                         <p class="lead">I'm a technical problem solver with soft skills and business savvy.</p> 
                         <p class="lead">I love to learn and take on new challenges.</p>
                         <p class="lead">I'm passionate about building cool stuff, impacting the world via technology, and improving every day.</p>
@@ -222,6 +222,12 @@
         }
         .pub-api-result-label{
             margin-left: 0px;
+        }
+        @media (max-width: 767px) {
+            .about-me-intro {
+                margin-top: 20px;
+                text-align: center;
+            }
         }
         </style>
     </body>
